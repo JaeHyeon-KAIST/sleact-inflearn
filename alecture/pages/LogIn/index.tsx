@@ -8,7 +8,7 @@ import { Navigate, Link } from 'react-router-dom';
 import useSWR from 'swr';
 
 const LogIn = () => {
-  const { data, error, mutate } = useSWR('https://jaehyeon.art/sleact/api/users', fetcher, {
+  const { data, error, mutate } = useSWR('/api/users', fetcher, {
     dedupingInterval: 100000,
   });
 
@@ -36,7 +36,7 @@ const LogIn = () => {
   }
 
   if (data) {
-    return <Navigate to="/workspace/channel" />;
+    return <Navigate to="/workspace/sleact/channel/일반" />;
   }
 
   // console.log(error, userData);

@@ -5,7 +5,7 @@ import axios from 'axios';
 
 const LogIn = loadable(() => import('@pages/LogIn'));
 const SignUp = loadable(() => import('@pages/SignUp'));
-const Channel = loadable(() => import('@pages/Channel'));
+const Workspace = loadable(() => import('@layouts/Workspace'));
 
 axios.defaults.baseURL = 'https://jaehyeon.art/sleact';
 
@@ -15,7 +15,7 @@ const App = () => {
       <Route path="/" element={<Navigate to="/login" />} />
       <Route path="/login" element={<LogIn />} />
       <Route path="/signup" element={<SignUp />} />
-      <Route path="/workspace/channel" element={<Channel />} />
+      <Route path="/workspace/:workspace/*" element={<Workspace />} />
     </Routes>
   );
 };
