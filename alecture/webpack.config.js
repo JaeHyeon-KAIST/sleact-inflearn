@@ -6,6 +6,7 @@ const TerserPlugin = require('terser-webpack-plugin');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const webpack = require('webpack');
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
@@ -13,7 +14,7 @@ const isDevelopment = process.env.NODE_ENV !== 'production';
 module.exports = {
   name: 'sleact',
   mode: isDevelopment ? 'development' : 'production',
-  devtool: isDevelopment ? 'hidden-source-map' : 'eval',
+  devtool: isDevelopment ? 'eval' : 'hidden-source-map',
   resolve: {
     extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
     alias: {
@@ -107,6 +108,10 @@ module.exports = {
   plugins: [
     isDevelopment && new ReactRefreshWebpackPlugin(),
     !isDevelopment && new CleanWebpackPlugin(),
+    new BundleAnalyzerPlugin({
+      analyzerMode: isDevelopment ? 'server' : 'static',
+      analyzerHost: '0.0.0.0',
+    }),
     new HtmlWebpackPlugin({
       template: './public/index.html',
       minify: isDevelopment
@@ -123,9 +128,7 @@ module.exports = {
       // },
     }),
     new CopyWebpackPlugin({
-      patterns: [
-        { from: './public/slack-data', to: './slack-data' },
-      ],
+      patterns: [{ from: './public/slack-data', to: './slack-data' }],
     }),
     new webpack.EnvironmentPlugin({ NODE_ENV: isDevelopment ? 'development' : 'production' }),
   ].filter(Boolean),
