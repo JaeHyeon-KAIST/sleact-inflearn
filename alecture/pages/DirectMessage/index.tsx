@@ -27,6 +27,15 @@ const DirectMessage = () => {
   } = useSWRInfinite<IDM[]>(
     (index) => `/api/workspaces/${workspace}/dms/${id}/chats?perPage=20&page=${index + 1}`,
     fetcher,
+    {
+      onSuccess(data) {
+        if (data?.length === 1) {
+          setTimeout(() => {
+            scrollbarRef.current?.scrollToBottom();
+          }, 100);
+        }
+      },
+    },
   );
 
   const [socket] = useSocket(workspace);
@@ -55,6 +64,7 @@ const DirectMessage = () => {
         }, false).then(() => {
           setChat('');
           scrollbarRef.current?.scrollToBottom();
+          localStorage.setItem(`${workspace}-${id}`, new Date().getTime().toString());
         });
         axios
           .post(`/api/workspaces/${workspace}/dms/${id}/chats`, {
@@ -104,6 +114,10 @@ const DirectMessage = () => {
     }
   }, [chatData]);
 
+  useEffect(() => {
+    localStorage.setItem(`${workspace}-${id}`, new Date().getTime().toString());
+  }, [workspace, id]);
+
   const onDrop = useCallback(
     (e: DragEvent<HTMLDivElement>) => {
       e.preventDefault();
@@ -131,6 +145,7 @@ const DirectMessage = () => {
       axios.post(`/api/workspaces/${workspace}/dms/${id}/images`, formData).then(() => {
         setDragOver(false);
         mutateChat();
+        localStorage.setItem(`${workspace}-${id}`, new Date().getTime().toString());
       });
     },
     [workspace, id],

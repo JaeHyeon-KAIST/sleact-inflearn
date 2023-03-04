@@ -27,6 +27,15 @@ const Channel = () => {
   } = useSWRInfinite<IChat[]>(
     (index) => `/api/workspaces/${workspace}/channels/${channel}/chats?perPage=20&page=${index + 1}`,
     fetcher,
+    {
+      onSuccess(data) {
+        if (data?.length === 1) {
+          setTimeout(() => {
+            scrollbarRef.current?.scrollToBottom();
+          }, 100);
+        }
+      },
+    },
   );
   const { data: channelMembersData } = useSWR<IUser[]>(
     myData ? `/api/workspaces/${workspace}/channels/${channel}/members` : null,
@@ -60,6 +69,7 @@ const Channel = () => {
         }, false).then(() => {
           setChat('');
           scrollbarRef.current?.scrollToBottom();
+          localStorage.setItem(`${workspace}-${channel}`, new Date().getTime().toString());
         });
         axios
           .post(`/api/workspaces/${workspace}/channels/${channel}/chats`, {
@@ -112,6 +122,10 @@ const Channel = () => {
     }
   }, [chatData]);
 
+  useEffect(() => {
+    localStorage.setItem(`${workspace}-${channel}`, new Date().getTime().toString());
+  }, [workspace, channel]);
+
   const onClickInviteChannel = useCallback(() => {
     setShowInviteChannelModal(true);
   }, []);
@@ -147,6 +161,7 @@ const Channel = () => {
       axios.post(`/api/workspaces/${workspace}/channels/${channel}/images`, formData).then(() => {
         setDragOver(false);
         mutateChat();
+        localStorage.setItem(`${workspace}-${channel}`, new Date().getTime().toString());
       });
     },
     [workspace, channel],
