@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './layouts/App';
 import { BrowserRouter } from 'react-router-dom';
+import SWRDevtools from '@jjordy/swr-devtools';
 
 const rootElement = document.getElementById('app');
 if (!rootElement) throw new Error('Failed to find the root element');
@@ -15,7 +16,9 @@ const baseName =
 root.render(
   <React.StrictMode>
     <BrowserRouter basename={baseName}>
-      <App />
+      <SWRDevtools>
+        <App />
+      </SWRDevtools>
     </BrowserRouter>
   </React.StrictMode>,
 );
